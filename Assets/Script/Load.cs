@@ -17,7 +17,7 @@ public class Load : MonoBehaviour
 
 	}
     public void ChangeScene()
-    {
+    { 
         SceneManager.LoadScene("SampleScene");
     }
 }

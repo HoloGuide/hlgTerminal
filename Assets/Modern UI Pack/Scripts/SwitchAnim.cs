@@ -5,7 +5,7 @@ public class SwitchAnim : MonoBehaviour {
 
 	[Header("SWITCH")]
 	public bool isOn;
-    public SwitchAnim switchAnim;
+    public SwitchAnim Switch;
     public Animator switchAnimator;
 
     private string onTransition = "Switch On";
@@ -13,7 +13,7 @@ public class SwitchAnim : MonoBehaviour {
 
     void Start ()
 	{
-        if (switchAnim.isOn == true)
+        if (isOn == true)
         {
             switchAnimator.Play(onTransition);
         }
@@ -26,18 +26,16 @@ public class SwitchAnim : MonoBehaviour {
 
 	public void AnimateSwitch()
 	{
-		if (switchAnim.isOn == true) 
+		if (Switch.isOn == true) 
 		{
             switchAnimator.Play(offTransition);
-            switchAnim.isOn = false;
-            isOn = false;
+            Switch.isOn = false;
         } 
 
-		else
+		else if(Switch.isOn == false)
 		{
             switchAnimator.Play(onTransition);
-            switchAnim.isOn = true;
-            isOn = true;
+            Switch.isOn = true;
         }
 	}
 }
