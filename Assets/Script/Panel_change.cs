@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SceneLoadscript_3 : MonoBehaviour
+public class Panel_change : MonoBehaviour
 {
     public GameObject Panel;
     public bool A = false;

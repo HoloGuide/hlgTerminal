@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SceneLoadscript_4 : MonoBehaviour
+public class Rute_Load : MonoBehaviour
 {
 
 	// Use this for initialization
@@ -18,7 +18,7 @@ public class SceneLoadscript_4 : MonoBehaviour
     public void ScreneLoad()
     {
 
-        Application.LoadLevel("Smartphone_UI_5_Unity");
+        Application.LoadLevel("Rute");
 
     }
 

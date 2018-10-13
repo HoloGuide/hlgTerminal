@@ -2,23 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SceneLoadScript_2 : MonoBehaviour
+public class Search_Load : MonoBehaviour
 {
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
 		
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
 		
 	}
 
-    public void ScreneLoad()
+    public void ScreneLoad ()
     {
 
-        Application.LoadLevel("Smartphone_UI_3_Unity");
+        Application.LoadLevel("Search");
 
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class announcement : MonoBehaviour {
+public class announcement_Load : MonoBehaviour {
 
     public GameObject Announcement;
     public GameObject Option;

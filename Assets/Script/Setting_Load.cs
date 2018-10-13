@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Load : MonoBehaviour
+public class Setting_Load : MonoBehaviour
 {
 	// Use this for initialization
 	void Start ()
@@ -17,7 +17,8 @@ public class Load : MonoBehaviour
 
 	}
     public void ChangeScene()
-    { 
-        SceneManager.LoadScene("SampleScene");
+    {
+        GameObject.Find("UIManager").GetComponent<UIManeger>().PrevSceneName = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene("Setting");
     }
 }

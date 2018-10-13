@@ -2,25 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SceneLoadScript_6 : MonoBehaviour
+public class Time_Load : MonoBehaviour
 {
 
 	// Use this for initialization
-	void Start ()
-    {
+	void Start () {
 		
 	}
 	
 	// Update is called once per frame
-	void Update ()
-    {
+	void Update () {
 		
 	}
 
-    public void ScreneLoad ()
+    public void ScreneLoad()
     {
 
-        Application.LoadLevel("Smartphone_UI_2_Unity");
+        Application.LoadLevel("Time");
 
     }
 
