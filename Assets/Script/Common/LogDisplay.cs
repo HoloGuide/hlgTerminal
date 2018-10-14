@@ -9,8 +9,10 @@ public class LogDisplay : MonoBehaviour
     public Text Label = null;
     public bool MultiLine = false;
     public int MaxLine = 15;
+    public int MaxChInLine = 50;
 
-    private List<string> logs = new List<string>();
+    private static string prevLog = "";
+    private static List<string> logs = new List<string>();
 
     private void Awake()
     {
@@ -26,12 +28,13 @@ public class LogDisplay : MonoBehaviour
     {
         if (!AppManager.Instance.OutputDebugLog) return;
         if (Label == null) return;
-        if (logs.Count == 0) return;
 
         if (!Label.gameObject.activeInHierarchy)
         {
             Label.gameObject.SetActive(true);
         }
+
+        Label.text = prevLog;
 
         foreach (var log in logs)
         {
@@ -39,7 +42,7 @@ public class LogDisplay : MonoBehaviour
             {
                 string text = Label.text;
 
-                text = log + Environment.NewLine + text;
+                text = (log.Substring(0, Math.Min(log.Length, MaxChInLine))) + Environment.NewLine + text;
 
                 var lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
                 if (lines.Count() > MaxLine)
@@ -55,8 +58,12 @@ public class LogDisplay : MonoBehaviour
             }
         }
 
+        prevLog = Label.text;
 
-        logs.Clear();
+        if (logs.Count > 0)
+        {
+            logs.Clear();
+        }
     }
 
     private void HandleLog(string logText, string stackTrace, LogType type)

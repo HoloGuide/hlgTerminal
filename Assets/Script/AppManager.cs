@@ -41,7 +41,7 @@ public class AppManager : Singleton<AppManager>
         }
         set
         {
-            Destination_OnValueChanged(value);
+            StartCoroutine(Destination_OnValueChanged(value));
             m_dst = value;
         }
     }
@@ -120,19 +120,20 @@ public class AppManager : Singleton<AppManager>
         }
     }
 
-    private void Destination_OnValueChanged(string dst)
+    private IEnumerator Destination_OnValueChanged(string dst)
     {
         // 最寄り駅を取得
         var nearestStation = (new GetStation()).GetStationName(m_currentLocation.lng, m_currentLocation.lat);
         nearestStation = nearestStation.Substring(0, nearestStation.Length - 1); // "駅"を取り除く
 
         // ルートを検索
-        var ets = new EkispertTransitSearch();
-        var routes = ets.SearchDeperture(DateTime.Now, nearestStation, dst);
+        var ets = this.GetComponent<EkispertTransitSearch>();
+        var routes = new List<HoloGuide.RouteInfo>();
+        yield return StartCoroutine(ets.SearchDeperture(routes, DateTime.Now, nearestStation, dst));
 
         if (routes == null)
         {
-            return;
+            yield break;
         }
 
         // Debug.LogFormat("{0}({1}) -> {2}({3})", routes[0].LeftSta, routes[0].LeftTime, routes[0].ArriveSta, routes[0].ArriveTime);

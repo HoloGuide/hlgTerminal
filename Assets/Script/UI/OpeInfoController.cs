@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class OpeInfoController : MonoBehaviour
 {
@@ -36,7 +37,8 @@ public class OpeInfoController : MonoBehaviour
             // 通常運行
             StatusIcon.sprite = StatusOK;
             StatusIcon.color = Color.green;
-        } else
+        }
+        else
         {
             // 遅延等有り
             StatusIcon.sprite = StatusInfo;

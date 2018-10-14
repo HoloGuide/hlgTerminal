@@ -1,13 +1,14 @@
 ﻿using Sgml;
 using System.Collections;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 
-public class GetOpeInfo  : MonoBehaviour
+public class GetOpeInfo : MonoBehaviour
 {
     //// GUI変数の宣言
     //public Text Text;
@@ -30,11 +31,9 @@ public class GetOpeInfo  : MonoBehaviour
         StartCoroutine("_GetOperateInfo");
     }
 
-    // 運行情報取得関数
     private IEnumerator _GetOperateInfo()
     {
-
-        Hashtable Data = new Hashtable()
+        var Data = new Hashtable()
         {
             ["仙山線"] = "https://transit.yahoo.co.jp/traininfo/detail/446/0/",
             ["東北本線"] = "https://transit.yahoo.co.jp/traininfo/detail/16/16/",
@@ -42,48 +41,38 @@ public class GetOpeInfo  : MonoBehaviour
             ["常磐線"] = "https://transit.yahoo.co.jp/traininfo/detail/443/0/"
         };
 
-        // 1.UnityWebRequestを生成
-        UnityWebRequest request = UnityWebRequest.Get((string)Data[m_lineName]);
-
-        // 2.SendWebRequestを実行し、送受信開始
-        yield return request.SendWebRequest();
-
-        // 3.isNetworkErrorとisHttpErrorでエラー判定
-        if (request.isHttpError || request.isNetworkError)
+        string html;
+        using (var req = UnityWebRequest.Get((string)Data[m_lineName]))
         {
-            // 4.エラー確認
-            Debug.Log(request.error);
-        }
-        else
-        {
-            // 4.結果確認
-            Debug.Log(request.downloadHandler.text);
+            req.SetRequestHeader("User-Agent", "");
+            yield return req.SendWebRequest();
+
+            html = req.downloadHandler.text;
         }
 
-        XDocument document = Parse(request.downloadHandler.text);
+        XDocument document = Parse(html);
 
         // 運行状況の取得
-        XElement Operate_info = document.XPathSelectElement("//meta[@property='og:description']");
+        XElement Operate_info = document.XPathSelectElement("//*[@id='main']/section/div/dl/dd/p");
+        if (Operate_info == null)
+        {
+            Operate_info = document.XPathSelectElement("//*[@id='mdServiceStatus']/dl/dd/p");
+        }
 
         // タグを外す操作
-        string info = Operate_info.ToString();
-
-        // 前部分
-        string OutputData = info.Remove(0, 41);
-
-        // 後ろ部分
-        OutputData = OutputData.Remove((OutputData.Length - 43));
+        string info = Regex.Replace(Operate_info.ToString(), "<[^>]*?>", ""); ;
 
         // 出力
+        // Debug.Log(info);
         // Text.text = OutputData;
-        m_callback(OutputData);
+        m_callback(info);
     }
 
     // HTMLをXMLに変換
-    public static XDocument Parse(string content)
+    private XDocument Parse(string content)
     {
         using (var reader = new StringReader(content))
-        using (var sgmlReader = new SgmlReader { DocType = "HTML", CaseFolding = CaseFolding.ToLower, IgnoreDtd = true, InputStream = reader })
+        using (var sgmlReader = new SgmlReader { DocType = "HTML", CaseFolding = CaseFolding.ToLower, IgnoreDtd = true, InputStream = reader})
         {
             return XDocument.Load(sgmlReader);
         }

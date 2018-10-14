@@ -1,15 +1,17 @@
 ﻿using HoloGuide;
 using Sgml;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class EkispertTransitSearch
+public class EkispertTransitSearch : MonoBehaviour
 {
-    public bool IsDebug = false;
+    public bool IsDebug = true;
 
     private string Station_Src = "";
     private string Station_Dst = "";
@@ -33,7 +35,9 @@ public class EkispertTransitSearch
     private const string ApiUrl = "http://api.ekispert.com/"; // APIのURL
     private const string Key = "LE_3nFzm5rsgA8sf"; // アクセスキー
 
-    public List<RouteInfo> SearchDeperture(DateTime date, string src, string dst, string transit = "")
+    private string html = "";
+
+    public IEnumerator SearchDeperture(List<RouteInfo> routes, DateTime date, string src, string dst, string transit = "")
     {
         m_searchType = SearchType.Deperture; // 出発時刻探索
 
@@ -46,17 +50,14 @@ public class EkispertTransitSearch
         LimitedExpress = false; // 特急
         Bus = false; // バス
 
-        string html = GetHtml(getEWSUrl(date));
+        yield return StartCoroutine(GetHtml(getEWSUrl(date)));
 
         if (html.Contains("Error"))
         {
-            return null;
+            yield break;
         }
 
         XDocument document = Parse(html);
-        
-        // 経路のリスト
-        var routes = new List<RouteInfo>();
 
         // 経路は4つと仮定して4回ループ
         for (int i = 0; i < 4; i++)
@@ -90,8 +91,6 @@ public class EkispertTransitSearch
 
             routes.Add(route);
         }
-
-        return routes;
     }
 
     private List<RouteInfo> _Search()
@@ -109,7 +108,7 @@ public class EkispertTransitSearch
         LimitedExpress = false; // 特急
         Bus = false; // バス
 
-        string html = GetHtml(getEWSUrl(date));
+        // string html = GetHtml(getEWSUrl(date));
 
         XDocument document = Parse(html);
 
@@ -203,23 +202,23 @@ public class EkispertTransitSearch
     /// </summary>
     /// <param name="url">URL</param>
     /// <returns>HTML</returns>
-    public string GetHtml(string url)
+    private IEnumerator GetHtml(string url)
     {
-        string html;
-        bool isDone = false;
-        WWW www = new WWW(url);
-
-        while (true)
+        using (var www = UnityWebRequest.Get(url))
         {
-            if (isDone == false && www.isDone)
-            {
-                html = www.text;
+            // スマートフォンからのアクセスのため、UserAgentを偽装してPC表示にする
+            www.SetRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
+            yield return www.SendWebRequest();
 
-                break;
+            if (www.isHttpError)
+            {
+                Debug.Log(www.error);
+            }
+            else
+            {
+                html = www.downloadHandler.text;
             }
         }
-        // Debug.Log(html);
-        return html;
     }
 
     /// <summary>
