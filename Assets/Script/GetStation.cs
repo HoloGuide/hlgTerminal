@@ -4,7 +4,7 @@ using System.IO;
 using System.Xml.Linq;
 using UnityEngine;
 
-public class GetStation : MonoBehaviour
+public class GetStation /* : MonoBehaviour */
 {
     /// <summary>
     /// 最寄り駅の名前を返します。

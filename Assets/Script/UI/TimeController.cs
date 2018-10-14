@@ -1,11 +1,21 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class TimeController : MonoBehaviour
 {
+    public List<GameObject> Blocks;
+
     private void Start()
     {
-        
+        for(int i = 0; i < 4; i++)
+        {
+            var r = AppManager.Instance.Routes[i];
+
+            var text = string.Format("{0}({1}) → {2}({3})", r.LeftSta, r.LeftTime, r.ArriveSta, r.ArriveTime);
+            Blocks[i].GetComponentInChildren<Text>().text = text;
+        }
     }
 
     public void BtnBack_OnClicked()
@@ -13,9 +23,9 @@ public class TimeController : MonoBehaviour
         SceneManager.LoadScene("Search");
     }
 
-    public void ListContent_OnClicked()
+    public void ListContent_OnClicked(int selectedIdx)
     {
-        // TODO: 次シーンへのルート情報の共有
+        AppManager.Instance.SelectedRouteIndex = selectedIdx;
         SceneManager.LoadScene("Route");
     }
 

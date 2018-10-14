@@ -48,6 +48,11 @@ public class EkispertTransitSearch
 
         string html = GetHtml(getEWSUrl(date));
 
+        if (html.Contains("Error"))
+        {
+            return null;
+        }
+
         XDocument document = Parse(html);
         
         // 経路のリスト

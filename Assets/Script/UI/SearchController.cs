@@ -8,8 +8,12 @@ public class SearchController : MonoBehaviour
 
     public void BtnSerach_OnClicked()
     {
+        if (InputField_Destination.text == "")
+        {
+            return;
+        }
+
         AppManager.Instance.Destination = InputField_Destination.text;
-        SceneManager.LoadScene("Time");
     }
 
     public void BtnSetting_OnClicked()
