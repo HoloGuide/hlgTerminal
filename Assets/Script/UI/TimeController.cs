@@ -3,6 +3,11 @@ using UnityEngine.SceneManagement;
 
 public class TimeController : MonoBehaviour
 {
+    private void Start()
+    {
+        
+    }
+
     public void BtnBack_OnClicked()
     {
         SceneManager.LoadScene("Search");

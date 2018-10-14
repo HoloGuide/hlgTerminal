@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Net;
 
 public class AppManager : Singleton<AppManager>
 {
@@ -32,7 +31,20 @@ public class AppManager : Singleton<AppManager>
     }
 
     public bool OutputDebugLog = false;
+    public string Destination
+    {
+        get
+        {
+            return m_dst;
+        }
+        set
+        {
+            Destination_OnValueChanged(value);
+            m_dst = value;
+        }
+    }
 
+    private string m_dst = "";
     private HoloGuide.Location m_currentLocation = null;
     private string m_prevSceneName { get; set; }
     private string firstConnectedIP = null;
@@ -40,6 +52,7 @@ public class AppManager : Singleton<AppManager>
 
     private void Start()
     {
+        // WebServiceの初期化・イベント登録
         WebService.Instance.StartService();
 
         WebService.Instance.OnConnected += WebService_OnConnected;
@@ -56,6 +69,16 @@ public class AppManager : Singleton<AppManager>
 
             action?.Invoke();
         }
+    }
+
+    private void Destination_OnValueChanged(string dst)
+    {
+        // 最寄り駅を取得
+        var nearestStation = new GetStation().GetStationName(m_currentLocation.lng, m_currentLocation.lat);
+
+        // 
+        
+
     }
 
     private void WebService_OnDisconnected(string ip)

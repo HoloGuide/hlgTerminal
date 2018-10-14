@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class SearchController : MonoBehaviour
 {
+    public InputField InputField_Destination;
+
     public void BtnSerach_OnClicked()
     {
-        // TODO: 目的地の次シーンへの共有
+        AppManager.Instance.Destination = InputField_Destination.text;
         SceneManager.LoadScene("Time");
     }
 
