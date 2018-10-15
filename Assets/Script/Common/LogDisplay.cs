@@ -26,8 +26,9 @@ public class LogDisplay : MonoBehaviour
 
     private void Update()
     {
-        if (!AppManager.Instance.OutputDebugLog) return;
         if (Label == null) return;
+        if (AppManager.Instance == null) return;
+        if (!AppManager.Instance.OutputDebugLog) return;
 
         if (!Label.gameObject.activeInHierarchy)
         {

@@ -4,12 +4,37 @@ using UnityEngine.SceneManagement;
 
 public class SearchController : MonoBehaviour
 {
+    public Text Label;
     public InputField InputField_Destination;
+
+    private int clickedCount = 0;
+
+    private void Start()
+    {
+        if (AppManager.Instance.NavigationState == NavState.Completed)
+        {
+            // 案内終了と表示
+            Label.text = "案内が終了しました。";
+            AppManager.Instance.NavigationState = NavState.Ready;
+        }
+    }
+
+    public void Logo_OnClicked()
+    {
+        clickedCount++;
+
+        if (clickedCount >= 5)
+        {
+            AppManager.Instance.OutputDebugLog = true;
+        }
+    }
 
     public void BtnSerach_OnClicked()
     {
-        if (InputField_Destination.text == "")
+        var station = InputField_Destination.text;
+        if (station == "")
         {
+            Label.text = "駅名を入力してください。";
             return;
         }
 

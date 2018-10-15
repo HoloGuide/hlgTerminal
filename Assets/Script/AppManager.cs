@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 
 public class AppManager : Singleton<AppManager>
 {
+    /// <summary>
+    /// 設定から元のシーンに戻る
+    /// </summary>
     public void BackFromSetting()
     {
         if (!string.IsNullOrEmpty(m_prevSceneName))
@@ -15,6 +18,9 @@ public class AppManager : Singleton<AppManager>
         }
     }
 
+    /// <summary>
+    /// 現在のシーン名を保存して設定シーンに遷移
+    /// </summary>
     public void MoveToSetting()
     {
         m_prevSceneName = SceneManager.GetActiveScene().name;
@@ -23,13 +29,18 @@ public class AppManager : Singleton<AppManager>
 
     public void NavigationFinished()
     {
-        // Loadシーンに戻る
+        // Searchシーンに戻る
+        NavigationState = NavState.Completed;
         actionDoMainThreads.Enqueue(() =>
         {
-            SceneManager.LoadScene("Load");
+            SceneManager.LoadScene("Search");
         });
     }
 
+    public const string VERSION = "ver.1.1-20181015";
+
+    public bool Connected { get; private set; }
+    public NavState NavigationState = NavState.Ready;
     public bool OutputDebugLog = false;
     public int SelectedRouteIndex = -1;
     public List<HoloGuide.RouteInfo> Routes;
@@ -64,12 +75,17 @@ public class AppManager : Singleton<AppManager>
         WebService.Instance.OnReceived += WebService_OnReceived;
         WebService.Instance.OnLocationChanged += WebService_OnLocationChanged;
 
-        m_currentLocation = new HoloGuide.Location();
-        m_currentLocation.type = "location";
-        m_currentLocation.lat = 38.223516;
-        m_currentLocation.lng = 140.872391;
+        Connected = false;
 
         StartCoroutine("GetLocationFromInput");
+
+#if UNITY_EDITOR
+        // Editor用GPS位置情報 (長町駅)
+        m_currentLocation = new HoloGuide.Location();
+        m_currentLocation.lat = 38.2269767492871;
+        m_currentLocation.lng = 140.8854836887674;
+#endif
+
     }
 
     private void Update()
@@ -124,7 +140,10 @@ public class AppManager : Singleton<AppManager>
     {
         // 最寄り駅を取得
         var nearestStation = (new GetStation()).GetStationName(m_currentLocation.lng, m_currentLocation.lat);
-        nearestStation = nearestStation.Substring(0, nearestStation.Length - 1); // "駅"を取り除く
+
+        // "駅"を削除
+        nearestStation = nearestStation.Replace("駅", "");
+        dst = dst.Replace("駅", "");
 
         // ルートを検索
         var ets = this.GetComponent<EkispertTransitSearch>();
@@ -149,10 +168,11 @@ public class AppManager : Singleton<AppManager>
 
         if (ip == firstConnectedIP)
         {
-            // Loadシーンに戻る
+            // Searchシーンに戻る
+            NavigationState = NavState.Ready;
             actionDoMainThreads.Enqueue(() =>
             {
-                SceneManager.LoadScene("Load");
+                SceneManager.LoadScene("Search");
             });
         }
     }
@@ -162,11 +182,7 @@ public class AppManager : Singleton<AppManager>
         Debug.Log("Connected: " + ip);
         firstConnectedIP = ip;
 
-        // Searchシーンに遷移
-        actionDoMainThreads.Enqueue(() =>
-        {
-            SceneManager.LoadScene("Search");
-        });
+        Connected = true;
     }
 
     private void WebService_OnReceived(string json)
@@ -184,4 +200,11 @@ public class AppManager : Singleton<AppManager>
         m_currentLocation = location;
     }
 
+}
+
+public enum NavState
+{
+    Ready, // 案内待機
+    Navigating, // 案内中
+    Completed // 案内終了
 }

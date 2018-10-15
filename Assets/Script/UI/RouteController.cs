@@ -1,15 +1,19 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Text.RegularExpressions;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Text.RegularExpressions;
+using UnityEngine.UI;
 
 public class RouteController : MonoBehaviour
 {
+    public Text BtnNavText;
     public Text TextRoute;
     public GameObject Panel;
+    public Text PanelText;
+    public Button BtnBack;
 
     private void Start()
     {
+        // ルートの表示
         var r = AppManager.Instance.Routes[AppManager.Instance.SelectedRouteIndex];
 
         var text = "";
@@ -27,6 +31,13 @@ public class RouteController : MonoBehaviour
         text += r.ArriveTime + " : " + r.ArriveSta + "\n";
 
         TextRoute.text = text;
+
+        BtnBack.interactable = AppManager.Instance.NavigationState != NavState.Navigating;
+        // 案内中なら、案内開始ボタンを案内中止ボタンにする
+        if (AppManager.Instance.NavigationState == NavState.Navigating)
+        {
+            BtnNavText.text = "案内中止";
+        }
 
     }
 
@@ -46,8 +57,13 @@ public class RouteController : MonoBehaviour
         SceneManager.LoadScene("Time");
     }
 
-    public void BtnStartNav_OnClicked()
+    public void BtnNav_OnClicked()
     {
+        if (AppManager.Instance.NavigationState == NavState.Navigating)
+        {
+            PanelText.text = "案内を中止しますか？";
+        }
+
         Panel.SetActive(true);
     }
 
@@ -55,7 +71,17 @@ public class RouteController : MonoBehaviour
     {
         if (yes)
         {
-            // TODO: 案内開始
+            if (AppManager.Instance.NavigationState == NavState.Navigating)
+            {
+                AppManager.Instance.NavigationState = NavState.Ready;
+                SceneManager.LoadScene("Search");
+            }
+            else
+            {
+                BtnBack.interactable = false;
+                AppManager.Instance.NavigationState = NavState.Navigating;
+                SceneManager.LoadScene("Load");
+            }
         }
         else
         {

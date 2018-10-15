@@ -28,6 +28,16 @@ public class GetOpeInfo : MonoBehaviour
         m_lineName = lineName;
         m_callback = callback;
 
+        if (m_lineName == "仙台光線")
+        {
+            m_callback("現在､事故･遅延に関する情報はありません。");
+            return;
+        } else if (m_lineName == "仙台高線")
+        {
+            m_callback("信号機故障の影響で、現在運転を見合わせております。");
+            return;
+        }
+
         StartCoroutine("_GetOperateInfo");
     }
 
@@ -35,7 +45,7 @@ public class GetOpeInfo : MonoBehaviour
     {
         var Data = new Hashtable()
         {
-            ["仙山線"] = "https://transit.yahoo.co.jp/traininfo/detail/446/0/",
+            ["仙山線"] = "https://transit.yahoo.co.jp/traininfo/detail/18/0/",
             ["東北本線"] = "https://transit.yahoo.co.jp/traininfo/detail/16/16/",
             ["仙石線"] = "https://transit.yahoo.co.jp/traininfo/detail/19/0/",
             ["常磐線"] = "https://transit.yahoo.co.jp/traininfo/detail/443/0/"

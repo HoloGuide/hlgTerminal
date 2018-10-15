@@ -6,7 +6,6 @@ namespace HoloGuide
     public class State
     {
         public string type = "state";
-        public bool navStarted;
         public bool isNavigating;
     }
 

@@ -15,7 +15,7 @@ public class JsonParser : Singleton<JsonParser>
                 // 案内状況
                 var state = JsonConvert.DeserializeObject<HoloGuide.State>(json);
 
-                if (state.navStarted && !state.isNavigating)
+                if (AppManager.Instance.NavigationState == NavState.Navigating && !state.isNavigating)
                 {
                     // 案内終了
                     Debug.Log("--- 案内終了 ---");
