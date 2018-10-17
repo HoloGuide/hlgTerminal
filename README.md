@@ -1,6 +1,6 @@
 # hlgTerminal
 
-HoloGuideでHoloLensを制御するためのAndroidアプリケーションです。
+HoloGuideでHoloLens側を制御するためのスマートフォンアプリケーションです。
 
 <img src="https://hologuide.github.io/img/hlgTerminal_1.jpg" title="スクリーンショット" width="200px">
 
