@@ -37,27 +37,14 @@ public class AppManager : Singleton<AppManager>
         });
     }
 
-    public const string VERSION = "ver.1.1-20181015";
+    public const string VERSION = "ver.2.0-20181017";
 
     public bool Connected { get; private set; }
     public NavState NavigationState = NavState.Ready;
     public bool OutputDebugLog = false;
     public int SelectedRouteIndex = -1;
     public List<HoloGuide.RouteInfo> Routes;
-    public string Destination
-    {
-        get
-        {
-            return m_dst;
-        }
-        set
-        {
-            StartCoroutine(Destination_OnValueChanged(value));
-            m_dst = value;
-        }
-    }
 
-    private string m_dst = "";
     private HoloGuide.Location m_currentLocation = null;
     private string m_prevSceneName { get; set; }
     private string firstConnectedIP = null;
@@ -136,30 +123,16 @@ public class AppManager : Singleton<AppManager>
         }
     }
 
-    private IEnumerator Destination_OnValueChanged(string dst)
+    public string GetNearestStation()
     {
-        // 最寄り駅を取得
-        var nearestStation = (new GetStation()).GetStationName(m_currentLocation.lng, m_currentLocation.lat);
-
-        // "駅"を削除
-        nearestStation = nearestStation.Replace("駅", "");
-        dst = dst.Replace("駅", "");
-
-        // ルートを検索
-        var ets = this.GetComponent<EkispertTransitSearch>();
-        var routes = new List<HoloGuide.RouteInfo>();
-        yield return StartCoroutine(ets.SearchDeperture(routes, DateTime.Now, nearestStation, dst));
-
-        if (routes == null)
+        try
         {
-            yield break;
+            var station = (new GetStation()).GetStationName(m_currentLocation.lng, m_currentLocation.lat);
+            return station.Replace("駅", "");
+        } catch(Exception)
+        {
+            return "";
         }
-
-        // Debug.LogFormat("{0}({1}) -> {2}({3})", routes[0].LeftSta, routes[0].LeftTime, routes[0].ArriveSta, routes[0].ArriveTime);
-
-        Routes = routes;
-
-        SceneManager.LoadScene("Time");
     }
 
     private void WebService_OnDisconnected(string ip)

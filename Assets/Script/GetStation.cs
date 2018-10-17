@@ -38,7 +38,7 @@ public class GetStation /* : MonoBehaviour */
 
     public string GetHtml(string url)
     {
-        Debug.Log("Test Log!");
+        // Debug.Log("Test Log!");
         string html;
         bool isDone = false;
         WWW www = new WWW(url);
@@ -52,7 +52,7 @@ public class GetStation /* : MonoBehaviour */
                 break;
             }
         }
-        Debug.Log(html);
+        // Debug.Log(html);
         return html;
     }
 }

@@ -11,8 +11,8 @@ public class LogDisplay : MonoBehaviour
     public int MaxLine = 15;
     public int MaxChInLine = 50;
 
-    private static string prevLog = "";
-    private static List<string> logs = new List<string>();
+    private static string Log = "";
+    private static Queue<string> logQueue = new Queue<string>();
 
     private void Awake()
     {
@@ -35,40 +35,34 @@ public class LogDisplay : MonoBehaviour
             Label.gameObject.SetActive(true);
         }
 
-        Label.text = prevLog;
-
-        foreach (var log in logs)
+        while(logQueue.Count > 0)
         {
-            if (Label.text != "" && MultiLine)
+            var _log = logQueue.Dequeue();
+
+            if (Log == "")
             {
-                string text = Label.text;
-
-                text = (log.Substring(0, Math.Min(log.Length, MaxChInLine))) + Environment.NewLine + text;
-
-                var lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-                if (lines.Count() > MaxLine)
-                {
-                    text = string.Join(Environment.NewLine, lines.Where(x => x != lines.Last()));
-                }
-
-                Label.text = text;
+                Log = _log;
+                continue;
             }
-            else
-            {
-                Label.text = log;
-            }
+
+            Log = (_log.Substring(0, Math.Min(_log.Length, MaxChInLine))) + Environment.NewLine + Log;
         }
 
-        prevLog = Label.text;
-
-        if (logs.Count > 0)
+        var lines = Log.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToList();
+        if (lines.Count > MaxLine)
         {
-            logs.Clear();
+            for(int i = MaxLine; i < lines.Count; i++)
+            {
+                lines.RemoveAt(i);
+            }
+            Log = string.Join(Environment.NewLine, lines);
         }
+
+        Label.text = Log;
     }
 
     private void HandleLog(string logText, string stackTrace, LogType type)
     {
-        logs.Add(logText);
+        logQueue.Enqueue(logText);
     }
 }

@@ -3,6 +3,15 @@
 namespace HoloGuide
 {
     [Serializable]
+    public class Route
+    {
+        public string type { get; set; }
+        public string filename { get; set; }
+        public int start { get; set; }
+        public int goal { get; set; }
+    }
+
+    [Serializable]
     public class State
     {
         public string type = "state";

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class RouteController : MonoBehaviour
 {
+    public Text LabelCost;
     public Text BtnNavText;
     public Text TextRoute;
     public GameObject Panel;
@@ -31,6 +32,7 @@ public class RouteController : MonoBehaviour
         text += r.ArriveTime + " : " + r.ArriveSta + "\n";
 
         TextRoute.text = text;
+        LabelCost.text = "料金: " + r.Money + "円";
 
         BtnBack.interactable = AppManager.Instance.NavigationState != NavState.Navigating;
         // 案内中なら、案内開始ボタンを案内中止ボタンにする

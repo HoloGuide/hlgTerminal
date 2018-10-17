@@ -39,12 +39,6 @@ public class SettingController : MonoBehaviour
         PanelNotification.SetActive(true);
     }
 
-    public void SliderVolume_OnValueChanged()
-    {
-        var vol = (int)(Slider_Volume.value * 100);
-        Text_Volume.text = vol + "%";
-    }
-
     enum Category
     {
         General, // 全般
